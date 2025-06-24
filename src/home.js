@@ -5,9 +5,14 @@ import { categoryChoosen, loadMore, categoryUnchoosen, cardOpened, cardClosed, s
 import { refs } from "./js/refs";
 import { STORAGE_KEYS } from "./js/constants";
 
-let categories = await getCategories();
-categories.unshift("All");
-addCategories(categories);
+
+async function init() {
+    let categories = await getCategories();
+    categories.unshift("All");
+    addCategories(categories);
+
+}
+init();
 refs.ul_categories.addEventListener("click", categoryChoosen);
 
 loadMore();
