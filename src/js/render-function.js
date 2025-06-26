@@ -54,3 +54,27 @@ export function addModal(data) {
 export function removeModal() {
     refs.modal.classList.remove("modal--is-open");
 }
+
+export function addCartButtonOff() {
+    refs.button_add_to_cart.textContent = "Remove from Cart";
+}
+
+export function addCartButtonOn() {
+    refs.button_add_to_cart.textContent = "Add to Cart";
+}
+
+export function cartCounterUpdate() {
+    refs.cart_count.textContent = (JSON.parse(localStorage.getItem("cart")) || []).length;
+}
+
+export function addWishlistButtonOff() {
+    refs.button_add_to_wishlist.textContent = "Remove from Wishlist";
+}
+
+export function addWishlistButtonOn() {
+    refs.button_add_to_wishlist.textContent = "Add to Wishlist";
+}
+
+export function wishlistCounterUpdate() {
+    refs.wishlist_count.textContent = (JSON.parse(localStorage.getItem("wishlist")) || []).length;
+}

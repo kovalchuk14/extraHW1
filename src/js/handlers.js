@@ -1,6 +1,6 @@
 // Функції, які передаються колбеками в addEventListners
 import { getProducts, getProductsByCategories, getProductById, getProductByName } from "./products-api";
-import { addProducts, clearList, addModal, removeModal } from "./render-function";
+import { addProducts, clearList } from "./render-function";
 import { STORAGE_KEYS } from "./constants";
 import { refs } from "./refs";
 
@@ -15,6 +15,7 @@ export async function loadMore() {
 export async function categoryChoosen(event) {
     if (event.target.nodeName != "BUTTON") return;
     clearList();
+    refs.loader.classList.remove("not-found--visible");
     STORAGE_KEYS.currentPage = 1;
     const firstButton = refs.ul_categories.querySelector("button");
     if (event.target == firstButton) {
@@ -50,35 +51,28 @@ export function isEmpty(list) {
     return false;
 }
 
-export async function cardOpened(event) {
-    const li = event.target.closest("li");
-    if (!li) return;
 
-    const data = await getProductById(li.dataset.id);
-    addModal(data);
-}
-
-export function cardClosed() {
-    removeModal();
-}
 
 export async function searchProduct(event) {
     event.preventDefault();
 
 
-    STORAGE_KEYS.choosenName = refs.form_input.value.trim();
+    STORAGE_KEYS.choosenName = event.target.elements.searchValue.value.trim();
     if (STORAGE_KEYS.choosenName == "") return;
     STORAGE_KEYS.currentPage = 1;
     const list = await getProductByName(STORAGE_KEYS.currentPage, STORAGE_KEYS.choosenName);
+    refs.loader.classList.remove("not-found--visible");
     clearList();
-    if (isEmpty(list) == true) return;
+    if (isEmpty(list) == true) {
+        event.target.elements.searchValue.value = "";
+        return;
+    }
     addProducts(list);
     STORAGE_KEYS.currentPage++;
 
     refs.load_button.removeEventListener("click", loadMoreByCategory);
     refs.load_button.removeEventListener("click", loadMore);
     refs.load_button.addEventListener("click", loadMoreByName);
-
 }
 
 
@@ -88,4 +82,17 @@ export async function loadMoreByName() {
     if (isEmpty(list) == true) return;
     addProducts(list);
     STORAGE_KEYS.currentPage++;
+}
+
+
+export async function cancelSearch() {
+    refs.load_button.removeEventListener("click", loadMoreByCategory);
+    refs.load_button.removeEventListener("click", loadMoreByName);
+    refs.load_button.addEventListener("click", loadMore);
+    STORAGE_KEYS.currentPage = 1;
+    refs.loader.classList.remove("not-found--visible");
+    clearList();
+    refs.form_input.value = "";
+    loadMore();
+
 }
